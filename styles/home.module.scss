@@ -32,11 +32,25 @@
       background: rgb(76,85,99);
       background: linear-gradient(20deg, rgba(76,85,99,1) 0%, rgba(108,117,130,1) 100%);
       border-radius: 2.415vw;
-      -webkit-appearance: none;
+      appearance: none;
       border: 0;
       color: white;
       padding: 2vh 15vw;
       box-shadow: 0 0 2.415vw 0 rgba(0,0,0,0.11);
     }
+  }
+}
+
+.list {
+  padding-top: 7.246vw;
+  padding-bottom: 7.246vw;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4.831vw;
+  img {
+    width: 90%;
+    border-radius: 2.415vw;
+    box-shadow: 0 0 2.415vw 0 rgba(0,0,0,0.11);
   }
 }
