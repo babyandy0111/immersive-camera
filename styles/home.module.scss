@@ -1,0 +1,42 @@
+.container {
+  height: 100vh;
+}
+
+.main {
+  height: 100%;
+  background: url('/images/bg3.png') no-repeat center bottom;
+  background-size: calc(626.812vw / 3.5) calc(131.58482142857vh / 3.5);
+  .func {
+    display: flex;
+    gap: 3vh;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 10vh;
+    img {
+      width: 20.531vw;
+      height: 20.531vw;
+    }
+    p {
+      font-size: 9.662vw;
+      text-align: center;
+      margin: 2vh 0;
+      color: #344767;
+      font-weight: bold;
+    }
+    button {
+      font-size: 7.246vw;
+      letter-spacing: 1vw;
+      background: rgb(76,85,99);
+      background: linear-gradient(20deg, rgba(76,85,99,1) 0%, rgba(108,117,130,1) 100%);
+      border-radius: 2.415vw;
+      -webkit-appearance: none;
+      border: 0;
+      color: white;
+      padding: 2vh 15vw;
+      box-shadow: 0 0 2.415vw 0 rgba(0,0,0,0.11);
+    }
+  }
+}
