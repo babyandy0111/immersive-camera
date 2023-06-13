@@ -148,6 +148,7 @@ const Photo = () => {
           )}
           <div className={styles.control}>
             <select
+              style={{ display: 'none' }}
               onChange={(event) => {
                 setActiveDeviceId(event.target.value);
               }}
@@ -186,11 +187,11 @@ const Photo = () => {
                   const photo = camera.current.takePhoto();
                   // const blob = convertBase64ToBlob(photo);
                   const img = new Image();
-                  img.onload = async function() {
+                  img.onload = async () => {
                     // console.log(this.width + 'x' + this.height);
                     // 相機寬高
                     // alert('W:' + camera.current.getW() + ' H:' + camera.current.getH());
-                    if (this.width > this.height) {
+                    if (img.width > img.height) {
                       endpoint = url + 'land-' + member + '.png';
                     } else {
                       endpoint = url + 'port-' + member + '.png';
@@ -201,7 +202,7 @@ const Photo = () => {
                     const blob2 = convertBase64ToBlob(frame);
 
                     try {
-                      const png = await resizeFile(blob2, this.width, this.height);
+                      const png = await resizeFile(blob2, img.width, img.height);
                       // console.log('o:', photo);
                       mergeImages([
                         { src: photo, x: 0, y: 0 },
