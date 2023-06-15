@@ -2,6 +2,7 @@ const path = require("path");
 const repo = "immersive-camera";
 const assetPrefix = `/${repo}/`;
 const basePath = `/${repo}`;
+const isProd = process.env.NODE_ENV === "production";
 
 module.exports = {
   images: {
@@ -14,5 +15,8 @@ module.exports = {
   distDir: "docs",
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
+  },
+  env: {
+    BASE_PATH: isProd ? basePath : "",
   },
 };
