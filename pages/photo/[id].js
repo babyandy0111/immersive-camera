@@ -18,7 +18,7 @@ const Photo = () => {
   const [numberOfCameras, setNumberOfCameras] = useState(0);
   const [image, setImage] = useState(null);
   const [showImage, setShowImage] = useState(false);
-  const [showDownload, setShowDownload] = useState(false);
+  // const [showDownload, setShowDownload] = useState(false);
   const camera = useRef(null);
   const [devices, setDevices] = useState([]);
   const [activeDeviceId, setActiveDeviceId] = useState(undefined);
@@ -168,15 +168,6 @@ const Photo = () => {
               }}
             />
 
-            {showDownload ? (
-              // <Base64Downloader base64={image} downloadName="file_name">
-              //   download
-              // </Base64Downloader>
-              <></>
-            ) : (
-              <></>
-            )}
-
             <div className={`${styles.button} ${styles['take-photo-button']}`}
               onClick={async () => {
                 if (camera.current) {
@@ -209,8 +200,6 @@ const Photo = () => {
                         { src: png, x: 0, y: 0 },
                       ]).then((b64) => {
                         setImage(b64);
-                        setShowDownload(true);
-                        // console.log('n:', b64);
                       });
                     } catch (err) {
                       console.log(err);
@@ -220,15 +209,6 @@ const Photo = () => {
                 }
               }}
             />
-            {/*<div className={`${styles.button} ${styles['change-facing-camera-button']}`}*/}
-            {/*  disabled={numberOfCameras <= 1}*/}
-            {/*  onClick={() => {*/}
-            {/*    if (camera.current) {*/}
-            {/*      const result = camera.current.switchCamera();*/}
-            {/*      console.log(result);*/}
-            {/*    }*/}
-            {/*  }}*/}
-            {/*/>*/}
           </div>
         </div>
       </div>
