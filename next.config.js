@@ -1,14 +1,15 @@
 const path = require("path");
-const debug = process.env.NODE_ENV !== "production";
+const repo = "immersive-camera";
+const assetPrefix = `/${repo}/`;
+const basePath = `/${repo}`;
 
 module.exports = {
-  exportPathMap: function () {
-    return {
-      "/": { page: "/" },
-      "/about": { page: "/about" },
-    };
+  images: {
+    loader: "akamai",
+    path: basePath,
   },
-  assetPrefix: !debug ? "/immersive-camera/" : "",
+  assetPrefix: assetPrefix,
+  basePath: basePath,
   output: "export",
   distDir: "docs",
   sassOptions: {
