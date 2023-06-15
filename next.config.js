@@ -2,7 +2,7 @@ const path = require('path')
  
 module.exports = {
   output: 'export',
-  distDir: 'build',
+  distDir: 'docs',
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
