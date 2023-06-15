@@ -220,15 +220,15 @@ const Photo = () => {
                 }
               }}
             />
-            <div className={`${styles.button} ${styles['change-facing-camera-button']}`}
-              disabled={numberOfCameras <= 1}
-              onClick={() => {
-                if (camera.current) {
-                  const result = camera.current.switchCamera();
-                  console.log(result);
-                }
-              }}
-            />
+            {/*<div className={`${styles.button} ${styles['change-facing-camera-button']}`}*/}
+            {/*  disabled={numberOfCameras <= 1}*/}
+            {/*  onClick={() => {*/}
+            {/*    if (camera.current) {*/}
+            {/*      const result = camera.current.switchCamera();*/}
+            {/*      console.log(result);*/}
+            {/*    }*/}
+            {/*  }}*/}
+            {/*/>*/}
           </div>
         </div>
       </div>
