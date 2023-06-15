@@ -1,8 +1,8 @@
 const path = require("path");
 const repo = "immersive-camera";
-const assetPrefix = `/${repo}/`;
-const basePath = `/${repo}`;
 const isProd = process.env.NODE_ENV === "production";
+const assetPrefix = isProd ? `/${repo}/` : "";
+const basePath = isProd ? `/${repo}` : "";
 
 module.exports = {
   images: {

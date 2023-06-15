@@ -7,7 +7,12 @@ export default function Home() {
 
   return (
     <Layout>
-      <main className={styles.main}>
+      <main
+        className={styles.main}
+        style={{
+          backgroundImage: `url(${process.env.BASE_PATH}/images/bg3.png)`,
+        }}
+      >
         <div className={styles.func}>
           <img src={`${process.env.BASE_PATH}` + "/images/logo.png"} />
           <p>
