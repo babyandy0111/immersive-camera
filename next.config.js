@@ -1,10 +1,14 @@
-const path = require('path')
- 
+const path = require("path");
+
 module.exports = {
-  basePath: '/immersive-camera',
-  output: 'export',
-  distDir: 'docs',
+  output: "export",
+  distDir: "docs",
   sassOptions: {
-    includePaths: [path.join(__dirname, 'styles')],
+    includePaths: [path.join(__dirname, "styles")],
   },
-}
+  images: {
+    loader: "akamai",
+    path: "",
+  },
+  assetPrefix: "./",
+};
