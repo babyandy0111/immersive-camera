@@ -6,7 +6,7 @@ import memberList from '../../public/assets/member.json';
 
 export default function Id() {
   const router = useRouter();
-  const [type, setType] = useState("");
+  const [type, setType] = useState("ar");
 
   useEffect(() => {
     if (router.query.id) {
@@ -26,7 +26,7 @@ export default function Id() {
     <Layout>
       <ul className={styles.list}>
         {memberList.map((data) => (
-          <li onClick={() => pushPage(data.member)}>
+          <li key={data.member} onClick={() => pushPage(data.member)}>
             <img
               src={`${process.env.BASE_PATH}${data.url}`}
             />
