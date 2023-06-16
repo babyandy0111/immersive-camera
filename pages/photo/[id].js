@@ -6,10 +6,9 @@ import Resizer from "react-image-file-resizer";
 import mergeImages from "merge-images";
 import { useRouter } from "next/router";
 
-import Base64Downloader from 'react-base64-downloader';
+import Base64Downloader from '../../components/react-base64-downloader';
 
-let $window = [];
-
+let $window = {};
 if (typeof window !== "undefined") {
   $window = window;
 }
@@ -26,8 +25,10 @@ const Photo = () => {
   const router = useRouter();
   const [member, setMember] = useState("");
   const [aspectRatioX, setAspectRatioX] = useState(9);
-  const [aspectRatioY, setAspectRatioY] = useState(16)
-  const [framePhotoSrc, setFramePhotoSrc] = useState(`${process.env.BASE_PATH}/images/characters/port-1.png`);
+  const [aspectRatioY, setAspectRatioY] = useState(16);
+  const [framePhotoSrc, setFramePhotoSrc] = useState(
+    `${process.env.BASE_PATH}/images/characters/port-1.png`
+  );
 
   const getBase64FromUrl = async (url) => {
     const data = await fetch(url);
@@ -64,21 +65,18 @@ const Photo = () => {
     // Return BLOB image after conversion
     return new Blob([uInt8Array], { type: imageType });
   };
-  
+
   /**
    * @url - Source of the image to use (or base64 image)
    * @aspectRatio - The aspect ratio to apply, ex: 1/1, 16/9, 4/3... etc.
    */
   const crop = (url, aspectRatio) => {
-    
-    return new Promise(resolve => {
-
+    return new Promise((resolve) => {
       // this image will hold our source image data
       const inputImage = new Image();
 
       // we want to wait for our image to load
       inputImage.onload = () => {
-
         // let's store the width and height of our image
         const inputWidth = inputImage.naturalWidth;
         const inputHeight = inputImage.naturalHeight;
@@ -96,18 +94,18 @@ const Photo = () => {
         }
 
         // calculate the position to draw the image at
-        const outputX = (outputWidth - inputWidth) * .5;
-        const outputY = (outputHeight - inputHeight) * .5;
+        const outputX = (outputWidth - inputWidth) * 0.5;
+        const outputY = (outputHeight - inputHeight) * 0.5;
 
         // create a canvas that will present the output image
-        const outputImage = document.createElement('canvas');
+        const outputImage = document.createElement("canvas");
 
         // set it to the same size as the image
         outputImage.width = outputWidth;
         outputImage.height = outputHeight;
 
         // draw our image at position 0, 0 on the canvas
-        const ctx = outputImage.getContext('2d');
+        const ctx = outputImage.getContext("2d");
         ctx.drawImage(inputImage, outputX, outputY);
         resolve(outputImage.toDataURL("image/jpeg"));
       };
@@ -115,7 +113,6 @@ const Photo = () => {
       // start loading our image
       inputImage.src = url;
     });
-    
   };
   const resizeFile = (file, w, h) =>
     new Promise((resolve) => {
@@ -150,27 +147,29 @@ const Photo = () => {
   }, [member]);
 
   const resizeWindow = () => {
-    let landPort = 'land';
-    if ($window.innerWidth > $window.innerHeight) {
+    let landPort = "land";
+    if ($window?.innerWidth > $window?.innerHeight) {
       setAspectRatioX(16);
       setAspectRatioY(9);
-      landPort = 'land';
+      landPort = "land";
     } else {
       setAspectRatioX(9);
       setAspectRatioY(16);
-      landPort = 'port';
+      landPort = "port";
     }
-    setFramePhotoSrc(`${process.env.BASE_PATH}/images/characters/${landPort}-${router.query.id}.png`);
-  }
+    setFramePhotoSrc(
+      `${process.env.BASE_PATH}/images/characters/${landPort}-${router.query.id}.png`
+    );
+  };
 
   useEffect(() => {
     if ($window !== undefined) {
       resizeWindow();
-      $window.onresize = function() {
+      $window.onresize = function () {
         resizeWindow();
-      }
+      };
     }
-  }, [aspectRatioX, aspectRatioY])
+  }, [aspectRatioX, aspectRatioY]);
 
   return (
     <>
@@ -213,10 +212,10 @@ const Photo = () => {
           {display === "block" && (
             <div id="img_head" className={styles["image-head"]}>
               <img
-                src={ framePhotoSrc }
+                src={framePhotoSrc}
                 style={{
-                  width: '100%',
-                  height: 'auto',
+                  width: "100%",
+                  height: "auto",
                 }}
               />
             </div>
@@ -234,7 +233,7 @@ const Photo = () => {
                 </option>
               ))}
             </select>
-            
+
             <div
               className={styles["image-preview"]}
               style={{ backgroundImage: `${image ? `url("${image}")` : ""}` }}
@@ -251,7 +250,10 @@ const Photo = () => {
                 if (camera.current) {
                   // 相機圖
                   const photo = camera.current.takePhoto();
-                  const cropPhoto = await crop(photo, aspectRatioX/aspectRatioY);
+                  const cropPhoto = await crop(
+                    photo,
+                    aspectRatioX / aspectRatioY
+                  );
                   // const blob = convertBase64ToBlob(photo);
                   const img = new Image();
                   img.onload = async () => {
