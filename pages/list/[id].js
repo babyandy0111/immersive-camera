@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import styles from "../../styles/home.module.scss";
 import Layout from "../../components/layout";
 import { useEffect, useState } from "react";
+import memberList from '../../public/assets/member.json';
 
 export default function Id() {
   const router = useRouter();
@@ -24,26 +25,13 @@ export default function Id() {
   return (
     <Layout>
       <ul className={styles.list}>
-        <li onClick={() => pushPage(1)}>
-          <img
-            src={`${process.env.BASE_PATH}` + "/images/characters/land-1.png"}
-          />
-        </li>
-        <li onClick={() => pushPage(2)}>
-          <img
-            src={`${process.env.BASE_PATH}` + "/images/characters/land-2.png"}
-          />
-        </li>
-        <li onClick={() => pushPage(3)}>
-          <img
-            src={`${process.env.BASE_PATH}` + "/images/characters/land-3.png"}
-          />
-        </li>
-        <li onClick={() => pushPage(4)}>
-          <img
-            src={`${process.env.BASE_PATH}` + "/images/characters/land-4.png"}
-          />
-        </li>
+        {memberList.map((data) => (
+          <li onClick={() => pushPage(data.member)}>
+            <img
+              src={`${process.env.BASE_PATH}${data.url}`}
+            />
+          </li>
+        ))}
       </ul>
     </Layout>
   );
