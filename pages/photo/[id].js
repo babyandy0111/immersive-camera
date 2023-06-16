@@ -25,6 +25,9 @@ const Photo = () => {
   const [display, setDisplay] = useState("block");
   const router = useRouter();
   const [member, setMember] = useState("");
+  const [aspectRatioX, setAspectRatioX] = useState(9);
+  const [aspectRatioY, setAspectRatioY] = useState(16)
+  const [framePhotoSrc, setFramePhotoSrc] = useState(`${process.env.BASE_PATH}/images/characters/port-1.png`);
 
   const getBase64FromUrl = async (url) => {
     const data = await fetch(url);
@@ -61,6 +64,59 @@ const Photo = () => {
     // Return BLOB image after conversion
     return new Blob([uInt8Array], { type: imageType });
   };
+  
+  /**
+   * @url - Source of the image to use (or base64 image)
+   * @aspectRatio - The aspect ratio to apply, ex: 1/1, 16/9, 4/3... etc.
+   */
+  const crop = (url, aspectRatio) => {
+    
+    return new Promise(resolve => {
+
+      // this image will hold our source image data
+      const inputImage = new Image();
+
+      // we want to wait for our image to load
+      inputImage.onload = () => {
+
+        // let's store the width and height of our image
+        const inputWidth = inputImage.naturalWidth;
+        const inputHeight = inputImage.naturalHeight;
+
+        // get the aspect ratio of the input image
+        const inputImageAspectRatio = inputWidth / inputHeight;
+
+        // if it's bigger than our target aspect ratio
+        let outputWidth = inputWidth;
+        let outputHeight = inputHeight;
+        if (inputImageAspectRatio > aspectRatio) {
+          outputWidth = inputHeight * aspectRatio;
+        } else if (inputImageAspectRatio < aspectRatio) {
+          outputHeight = inputWidth / aspectRatio;
+        }
+
+        // calculate the position to draw the image at
+        const outputX = (outputWidth - inputWidth) * .5;
+        const outputY = (outputHeight - inputHeight) * .5;
+
+        // create a canvas that will present the output image
+        const outputImage = document.createElement('canvas');
+
+        // set it to the same size as the image
+        outputImage.width = outputWidth;
+        outputImage.height = outputHeight;
+
+        // draw our image at position 0, 0 on the canvas
+        const ctx = outputImage.getContext('2d');
+        ctx.drawImage(inputImage, outputX, outputY);
+        resolve(outputImage.toDataURL("image/jpeg"));
+      };
+
+      // start loading our image
+      inputImage.src = url;
+    });
+    
+  };
   const resizeFile = (file, w, h) =>
     new Promise((resolve) => {
       Resizer.imageFileResizer(
@@ -78,6 +134,7 @@ const Photo = () => {
         h
       );
     });
+
   useEffect(() => {
     (async () => {
       const devices = await navigator.mediaDevices.enumerateDevices();
@@ -90,10 +147,30 @@ const Photo = () => {
     if (router.query.id) {
       setMember(router.query.id);
     }
-    // const arr = queryStr.split('=');
-    // setFileName(arr[1]);
-    console.log(member);
   }, [member]);
+
+  const resizeWindow = () => {
+    let landPort = 'land';
+    if ($window.innerWidth > $window.innerHeight) {
+      setAspectRatioX(16);
+      setAspectRatioY(9);
+      landPort = 'land';
+    } else {
+      setAspectRatioX(9);
+      setAspectRatioY(16);
+      landPort = 'port';
+    }
+    setFramePhotoSrc(`${process.env.BASE_PATH}/images/characters/${landPort}-${router.query.id}.png`);
+  }
+
+  useEffect(() => {
+    if ($window !== undefined) {
+      resizeWindow();
+      $window.onresize = function() {
+        resizeWindow();
+      }
+    }
+  }, [aspectRatioX, aspectRatioY])
 
   return (
     <>
@@ -113,8 +190,7 @@ const Photo = () => {
             <Camera
               ref={camera}
               facingMode="environment"
-              aspectRatio="cover"
-              // aspectRatio={16 / 9}
+              aspectRatio={aspectRatioX / aspectRatioY}
               numberOfCamerasCallback={(i) => setNumberOfCameras(i)}
               videoSourceDeviceId={activeDeviceId}
               errorMessages={{
@@ -133,32 +209,13 @@ const Photo = () => {
           )}
           {display === "block" && (
             <div id="img_head" className={styles["image-head"]}>
-              {$window?.innerWidth > $window?.innerHeight ? (
-                <img
-                  src={
-                    `${process.env.BASE_PATH}` +
-                    "/images/characters/land-" +
-                    member +
-                    ".png"
-                  }
-                  alt={"test"}
-                  style={{
-                    width: $window?.innerWidth - 130,
-                    height: $window?.innerHeight,
-                  }}
-                />
-              ) : (
-                <img
-                  src={
-                    `${process.env.BASE_PATH}` +
-                    "/images/characters/port-" +
-                    member +
-                    ".png"
-                  }
-                  alt={"test"}
-                  style={{ width: $window?.innerWidth }}
-                />
-              )}
+              <img
+                src={ framePhotoSrc }
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                }}
+              />
             </div>
           )}
           <div className={styles.control}>
@@ -188,26 +245,14 @@ const Photo = () => {
               className={`${styles.button} ${styles["take-photo-button"]}`}
               onClick={async () => {
                 if (camera.current) {
-                  const url =
-                    `${process.env.BASE_PATH}` + "/images/characters/";
-                  let endpoint = "";
-
                   // 相機圖
                   const photo = camera.current.takePhoto();
+                  const cropPhoto = await crop(photo, aspectRatioX/aspectRatioY);
                   // const blob = convertBase64ToBlob(photo);
                   const img = new Image();
                   img.onload = async () => {
-                    // console.log(this.width + 'x' + this.height);
-                    // 相機寬高
-                    // alert('W:' + camera.current.getW() + ' H:' + camera.current.getH());
-                    if (img.width > img.height) {
-                      endpoint = url + "land-" + member + ".png";
-                    } else {
-                      endpoint = url + "port-" + member + ".png";
-                    }
-
                     // 匡
-                    const frame = await getBase64FromUrl(endpoint);
+                    const frame = await getBase64FromUrl(framePhotoSrc);
                     const blob2 = convertBase64ToBlob(frame);
 
                     try {
@@ -218,7 +263,7 @@ const Photo = () => {
                       );
                       // console.log('o:', photo);
                       mergeImages([
-                        { src: photo, x: 0, y: 0 },
+                        { src: cropPhoto, x: 0, y: 0 },
                         { src: png, x: 0, y: 0 },
                       ]).then((b64) => {
                         setImage(b64);
@@ -227,7 +272,7 @@ const Photo = () => {
                       console.log(err);
                     }
                   };
-                  img.src = photo;
+                  img.src = cropPhoto;
                 }
               }}
             />
