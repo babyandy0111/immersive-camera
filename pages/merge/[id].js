@@ -6,6 +6,8 @@ import React, { useEffect, useState } from "react";
 import Resizer from "react-image-file-resizer";
 import mergeImages from "merge-images";
 
+import Base64Downloader from '../../components/react-base64-downloader';
+
 let $window = {};
 if (typeof window !== "undefined") {
   $window = window;
@@ -14,15 +16,15 @@ if (typeof window !== "undefined") {
 export default function Merge() {
   const router = useRouter();
   const [member, setMember] = useState("");
-  // const [blobFile, setBlobFile] = useState(null);
+  // const [blobPhoto, setBlobPhoto] = useState(null);
   // const [uploadPhoto, setUploadPhoto] = useState(null);
   const [image, setImage] = useState(null);
+  const [mergedImage, setMergedImage] = useState(null);
   
   const [aspectRatioX, setAspectRatioX] = useState(9);
   const [aspectRatioY, setAspectRatioY] = useState(16);
-  const [framePhotoSrc, setFramePhotoSrc] = useState(
-    `${process.env.BASE_PATH}/images/characters/port-1.png`
-  );
+  const [framePhotoSrc, setFramePhotoSrc] = useState(`${process.env.BASE_PATH}/images/characters/port-1.png`);
+
   const getBase64FromUrl = async (url) => {
     const data = await fetch(url);
     const blob = await data.blob();
@@ -142,20 +144,17 @@ export default function Merge() {
     const handleFileChange = async (e) => {
       if (e.target.files) {
         const base64Photo = await getBase64FromBlob(e.target.files[0]);
-
+        // 上傳的相片
         const photoImg = new Image();
         photoImg.onload = async () => {
           const { width, height } = photoImg;
-          let preResizePhoto = base64Photo;
-          console.log('a');
+          let croppedPhoto = base64Photo;
           if ((aspectRatioX === 9 && aspectRatioY === 16 && width > height) || (aspectRatioX === 16 && aspectRatioY === 9 && width < height)) {
-            console.log('b', preResizePhoto, aspectRatioX, aspectRatioY);
-            preResizePhoto = await crop(preResizePhoto, aspectRatioX / aspectRatioY);            
+            // 手機拿「直式」的狀態下(9:16)，上傳的照片為「橫式」，或著，在手機拿「橫式」的狀態下(16:9)，上傳的照片為「直式」
+            // 就執行照片裁切以符合相框的長寬比例
+            croppedPhoto = await crop(croppedPhoto, aspectRatioX / aspectRatioY);            
           }
-          console.log('c');
-          const cover2BlobPhoto = convertBase64ToBlob(preResizePhoto);
-          console.log('d', cover2BlobPhoto);
-
+          const cover2BlobPhoto = convertBase64ToBlob(croppedPhoto);
           let sX = 1920;
           let sY = 1080;
           if (aspectRatioX === 9 && aspectRatioY === 16) {
@@ -164,47 +163,19 @@ export default function Merge() {
           }
           const resizePhoto = await resizeFile(cover2BlobPhoto, sX, sY);
           setImage(resizePhoto);
-          console.log(resizePhoto);
-  
+
+          // 預先合成照片在變數裡
+          mergeImages([
+            { src: resizePhoto, x: 0, y: 0 },
+            { src: framePhotoSrc, x: 0, y: 0 },
+          ]).then((b64) => {
+            setMergedImage(b64);
+          });
         }
         photoImg.src = base64Photo;
 
-        // setUploadPhoto(base64Photo);
-        // setBlobFile(e.target.files[0]);
       }
     };
-  
-  const handleUploadClick = async () => {
-  //   if (!file) {
-  //     return;
-  //   }
-
-  //   const url = `${process.env.BASE_PATH}` + "/images/characters/";
-  //   let endpoint = "";
-  //   const w = 1920;
-  //   const h = 1080;
-
-  //   // todo resize & mergeImages
-  //   if (window.innerWidth > window.innerHeight) {
-  //     endpoint = url + "land-" + member + ".png";
-  //   } else {
-  //     endpoint = url + "port-" + member + ".png";
-  //     const w = 1080;
-  //     const h = 1920;
-  //   }
-
-  //   const frame = await getBase64FromUrl(endpoint);
-  //   const blob2 = convertBase64ToBlob(frame);
-
-  //   const png1 = await resizeFile(file, w, h); // 上傳檔案
-  //   const png2 = await resizeFile(blob2, w, h); // 匡
-  //   mergeImages([
-  //     { src: png1, x: 0, y: 0 },
-  //     { src: png2, x: 0, y: 0 },
-  //   ]).then((b64) => {
-  //     setImage(b64);
-  //   });
-  };
 
   useEffect(() => {
     if (router.query.id) {
@@ -232,6 +203,8 @@ export default function Merge() {
     if ($window !== undefined) {
       resizeWindow();
       $window.onresize = function () {
+        setImage(null);
+        setMergedImage(null)
         resizeWindow();
       };
     }
@@ -241,12 +214,12 @@ export default function Merge() {
     <Layout>
       <main className={`${homeStyles.main}`}>
         <div className={mergeStyles['preview-img']} style={{ backgroundImage: `url(${framePhotoSrc}`}}></div>
-        <div className={`${homeStyles.func} ${mergeStyles.func}`}>
+        <div className={`${homeStyles.func} ${mergeStyles.func} ${mergedImage ? mergeStyles['merged-img'] : ''}`}>
           <div className={mergeStyles['select-file']}>
-            <input type="file" onChange={handleFileChange} />
+            <input type="file" accept="image/*" onChange={handleFileChange} />
             <button>選擇照片</button>
           </div>
-          <button onClick={handleUploadClick}>下載照片</button>
+          {mergedImage !== null && <Base64Downloader base64={mergedImage} downloadName={`photo${member}`}>下載照片</Base64Downloader> }
         </div>
 
         <div
@@ -255,9 +228,6 @@ export default function Merge() {
             backgroundImage: `${image ? `url("${image}")` : ""}`,
           }}
           image={image}
-          onClick={() => {
-            // alert(1);
-          }}
         />
       </main>
     </Layout>

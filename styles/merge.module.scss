@@ -32,3 +32,21 @@
   background-position: left top;
   background-size: 100% auto;
 }
+
+.merged-img {
+  flex-direction: row !important;
+  justify-content: center !important;
+  align-items: flex-end !important;
+  bottom: 0 !important;
+  top: initial !important;
+  button {
+    width: 40vw !important;
+    font-size: 6vw !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  input[type=file] {
+    width: 40vw !important;
+    height: 8.5vh !important;
+  }
+}
