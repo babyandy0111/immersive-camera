@@ -10,6 +10,7 @@
     "merge-images": "^2.0.0",
     "next": "latest",
     "react": "18.2.0",
+    "react-base64-downloader": "^2.1.7",
     "react-camera-pro": "^1.3.0",
     "react-dom": "18.2.0",
     "react-image-file-resizer": "^0.4.8"
