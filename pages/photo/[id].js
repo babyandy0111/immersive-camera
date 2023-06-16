@@ -6,7 +6,7 @@ import Resizer from "react-image-file-resizer";
 import mergeImages from "merge-images";
 import { useRouter } from "next/router";
 
-// import Base64Downloader from 'react-base64-downloader';
+import Base64Downloader from 'react-base64-downloader';
 
 let $window = [];
 
@@ -177,15 +177,18 @@ const Photo = () => {
       <div id="img_head_back">
         <div className={styles.wrapper}>
           {showImage ? (
-            <div
-              className={styles["full-screen-image-preview"]}
-              style={{ backgroundImage: `${image ? `url("${image}")` : ""}` }}
-              image={image}
-              onClick={() => {
-                setShowImage(!showImage);
-                setDisplay(display === "none" ? "block" : "none");
-              }}
-            />
+            <div>
+              <div
+                className={styles["full-screen-image-preview"]}
+                style={{ backgroundImage: `${image ? `url("${image}")` : ""}` }}
+                image={image}
+                onClick={() => {
+                  setShowImage(!showImage);
+                  setDisplay(display === "none" ? "block" : "none");
+                }}
+              />
+              <Base64Downloader base64={image} downloadName={`photo${member}`} className={styles["download-btn"]} style={{ backgroundImage: `url(${process.env.BASE_PATH}/images/buttons/download.png)` }}>下載照片</Base64Downloader>
+            </div>
           ) : (
             <Camera
               ref={camera}
@@ -231,6 +234,7 @@ const Photo = () => {
                 </option>
               ))}
             </select>
+            
             <div
               className={styles["image-preview"]}
               style={{ backgroundImage: `${image ? `url("${image}")` : ""}` }}
