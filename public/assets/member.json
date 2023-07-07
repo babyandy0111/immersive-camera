@@ -218,5 +218,45 @@
   {
     "member": 55,
     "url": "/images/characters/land-55.png"
+  },
+  {
+    "member": 56,
+    "url": "/images/characters/land-56.png"
+  },
+  {
+    "member": 57,
+    "url": "/images/characters/land-57.png"
+  },
+  {
+    "member": 58,
+    "url": "/images/characters/land-58.png"
+  },
+  {
+    "member": 59,
+    "url": "/images/characters/land-59.png"
+  },
+  {
+    "member": 60,
+    "url": "/images/characters/land-60.png"
+  },
+  {
+    "member": 61,
+    "url": "/images/characters/land-61.png"
+  },
+  {
+    "member": 62,
+    "url": "/images/characters/land-62.png"
+  },
+  {
+    "member": 63,
+    "url": "/images/characters/land-63.png"
+  },
+  {
+    "member": 64,
+    "url": "/images/characters/land-64.png"
+  },
+  {
+    "member": 65,
+    "url": "/images/characters/land-65.png"
   }
 ]
